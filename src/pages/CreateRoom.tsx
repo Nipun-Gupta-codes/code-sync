@@ -1,18 +1,10 @@
 
 import React, { useState } from 'react';
-import { 
-  Box, 
-  AppBar, 
-  Toolbar, 
-  Typography, 
-  Container,
-  Paper,
-  TextField,
-  Button,
-  IconButton,
-  CircularProgress
-} from '@mui/material';
-import { ArrowBack } from '@mui/icons-material';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const CreateRoom = () => {
@@ -39,71 +31,65 @@ const CreateRoom = () => {
   };
 
   return (
-    <Box sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>
-      <AppBar position="static">
-        <Toolbar>
-          <IconButton color="inherit" onClick={() => navigate('/')} sx={{ mr: 2 }}>
-            <ArrowBack />
-          </IconButton>
-          <Typography variant="h6">
-            Create Room
-          </Typography>
-        </Toolbar>
-      </AppBar>
+    <div className="min-h-screen bg-gray-50">
+      {/* Header */}
+      <div className="bg-blue-600 text-white p-4">
+        <div className="flex items-center gap-4">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => navigate('/')}
+            className="text-white hover:bg-blue-700"
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Back
+          </Button>
+          <h1 className="text-xl font-semibold">Create Room</h1>
+        </div>
+      </div>
 
-      <Container maxWidth="sm" sx={{ mt: 4 }}>
-        <Paper elevation={3} sx={{ p: 4 }}>
-          <Typography variant="h4" gutterBottom textAlign="center">
-            Create a New Room
-          </Typography>
-          
-          <Box sx={{ mt: 3 }}>
-            <TextField
-              fullWidth
-              label="Room Name"
-              value={roomName}
-              onChange={(e) => setRoomName(e.target.value)}
-              margin="normal"
-              required
-            />
-            
-            <TextField
-              fullWidth
-              label="Password (optional)"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              margin="normal"
-              helperText="Leave empty for public room"
-            />
-            
-            <Box sx={{ position: 'relative', mt: 3 }}>
+      {/* Content */}
+      <div className="container mx-auto px-4 py-8">
+        <div className="max-w-md mx-auto">
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-center text-2xl">Create a New Room</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="roomName">Room Name</Label>
+                <Input
+                  id="roomName"
+                  value={roomName}
+                  onChange={(e) => setRoomName(e.target.value)}
+                  placeholder="Enter room name"
+                  required
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="password">Password (optional)</Label>
+                <Input
+                  id="password"
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Leave empty for public room"
+                />
+              </div>
+              
               <Button
-                fullWidth
-                variant="contained"
-                size="large"
                 onClick={handleCreate}
                 disabled={loading}
+                className="w-full"
               >
-                Create Room
+                {loading ? 'Creating...' : 'Create Room'}
               </Button>
-              {loading && (
-                <CircularProgress
-                  size={24}
-                  sx={{
-                    position: 'absolute',
-                    top: '50%',
-                    left: '50%',
-                    marginTop: '-12px',
-                    marginLeft: '-12px',
-                  }}
-                />
-              )}
-            </Box>
-          </Box>
-        </Paper>
-      </Container>
-    </Box>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    </div>
   );
 };
 

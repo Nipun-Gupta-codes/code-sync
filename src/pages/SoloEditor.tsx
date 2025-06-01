@@ -1,30 +1,21 @@
 
 import React, { useState, useRef, useEffect } from 'react';
+import { Button } from '@/components/ui/button';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { 
-  Box, 
-  AppBar, 
-  Toolbar, 
-  Typography, 
-  Select, 
-  MenuItem, 
-  IconButton, 
-  TextField,
-  Collapse,
-  Paper,
-  FormControl,
-  InputLabel,
-  Chip
-} from '@mui/material';
-import { 
-  PlayArrow, 
-  ContentCopy, 
+  Play, 
+  Copy, 
   Download, 
   Upload, 
   Save, 
   Home,
-  ExpandMore,
-  ExpandLess
-} from '@mui/icons-material';
+  ChevronDown,
+  ChevronUp
+} from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import Editor from '@monaco-editor/react';
 
@@ -115,92 +106,104 @@ const SoloEditor = () => {
   };
 
   return (
-    <Box sx={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
-      {/* AppBar */}
-      <AppBar position="static">
-        <Toolbar>
-          <IconButton color="inherit" onClick={() => navigate('/')} sx={{ mr: 2 }}>
-            <Home />
-          </IconButton>
-          <Typography variant="h6" sx={{ flexGrow: 1 }}>
-            CodeSync - Solo IDE
-          </Typography>
-          <Chip label="Solo Mode" color="secondary" variant="outlined" />
-        </Toolbar>
-      </AppBar>
+    <div className="h-screen flex flex-col">
+      {/* Header */}
+      <div className="bg-blue-600 text-white p-4 flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => navigate('/')}
+            className="text-white hover:bg-blue-700"
+          >
+            <Home className="w-4 h-4 mr-2" />
+            Home
+          </Button>
+          <h1 className="text-xl font-semibold">CodeSync - Solo IDE</h1>
+        </div>
+        <div className="bg-blue-500 px-3 py-1 rounded-full text-sm">
+          Solo Mode
+        </div>
+      </div>
 
       {/* Toolbar */}
-      <Paper elevation={1} sx={{ p: 2, borderRadius: 0 }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, flexWrap: 'wrap' }}>
-          <FormControl size="small" sx={{ minWidth: 120 }}>
-            <InputLabel>Language</InputLabel>
-            <Select
-              value={language}
-              label="Language"
-              onChange={(e) => setLanguage(e.target.value)}
-            >
-              {languages.map((lang) => (
-                <MenuItem key={lang.value} value={lang.value}>
-                  {lang.label}
-                </MenuItem>
-              ))}
+      <div className="border-b p-4 bg-white">
+        <div className="flex items-center gap-4 flex-wrap">
+          <div className="flex items-center gap-2">
+            <Label>Language:</Label>
+            <Select value={language} onValueChange={setLanguage}>
+              <SelectTrigger className="w-32">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {languages.map((lang) => (
+                  <SelectItem key={lang.value} value={lang.value}>
+                    {lang.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
             </Select>
-          </FormControl>
+          </div>
 
-          <FormControl size="small" sx={{ minWidth: 120 }}>
-            <InputLabel>Theme</InputLabel>
-            <Select
-              value={theme}
-              label="Theme"
-              onChange={(e) => setTheme(e.target.value)}
-            >
-              {themes.map((th) => (
-                <MenuItem key={th.value} value={th.value}>
-                  {th.label}
-                </MenuItem>
-              ))}
+          <div className="flex items-center gap-2">
+            <Label>Theme:</Label>
+            <Select value={theme} onValueChange={setTheme}>
+              <SelectTrigger className="w-32">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {themes.map((th) => (
+                  <SelectItem key={th.value} value={th.value}>
+                    {th.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
             </Select>
-          </FormControl>
+          </div>
 
-          <IconButton onClick={handleCopyCode} title="Copy Code">
-            <ContentCopy />
-          </IconButton>
+          <Button variant="outline" size="sm" onClick={handleCopyCode}>
+            <Copy className="w-4 h-4 mr-2" />
+            Copy
+          </Button>
 
-          <IconButton onClick={handleDownload} title="Download">
-            <Download />
-          </IconButton>
+          <Button variant="outline" size="sm" onClick={handleDownload}>
+            <Download className="w-4 h-4 mr-2" />
+            Download
+          </Button>
 
-          <IconButton title="Upload File">
-            <Upload />
-          </IconButton>
+          <Button variant="outline" size="sm">
+            <Upload className="w-4 h-4 mr-2" />
+            Upload
+          </Button>
 
-          <IconButton title="Save to GitHub">
-            <Save />
-          </IconButton>
+          <Button variant="outline" size="sm">
+            <Save className="w-4 h-4 mr-2" />
+            Save to GitHub
+          </Button>
 
-          <TextField
-            size="small"
-            label="Input"
-            value={stdin}
-            onChange={(e) => setStdin(e.target.value)}
-            sx={{ width: 200 }}
-            multiline
-            rows={1}
-          />
+          <div className="flex items-center gap-2">
+            <Label>Input:</Label>
+            <Input
+              value={stdin}
+              onChange={(e) => setStdin(e.target.value)}
+              placeholder="Program input..."
+              className="w-48"
+            />
+          </div>
 
-          <IconButton 
+          <Button 
             onClick={handleRunCode} 
             disabled={isRunning}
-            sx={{ bgcolor: 'success.main', color: 'white', '&:hover': { bgcolor: 'success.dark' } }}
-            title="Run Code"
+            className="bg-green-600 hover:bg-green-700"
           >
-            <PlayArrow />
-          </IconButton>
-        </Box>
-      </Paper>
+            <Play className="w-4 h-4 mr-2" />
+            {isRunning ? 'Running...' : 'Run Code'}
+          </Button>
+        </div>
+      </div>
 
       {/* Editor */}
-      <Box sx={{ flex: 1, position: 'relative' }}>
+      <div className="flex-1">
         <Editor
           height="100%"
           language={language}
@@ -215,43 +218,23 @@ const SoloEditor = () => {
             wordWrap: 'on',
           }}
         />
-      </Box>
+      </div>
 
       {/* Output Console */}
-      <Paper elevation={3} sx={{ borderRadius: 0 }}>
-        <Box 
-          sx={{ 
-            display: 'flex', 
-            alignItems: 'center', 
-            p: 1, 
-            bgcolor: 'grey.100',
-            cursor: 'pointer'
-          }}
-          onClick={() => setConsoleOpen(!consoleOpen)}
-        >
-          <Typography variant="subtitle2" sx={{ flexGrow: 1 }}>
-            Output Console
-          </Typography>
-          {consoleOpen ? <ExpandLess /> : <ExpandMore />}
-        </Box>
-        <Collapse in={consoleOpen}>
-          <Box 
-            sx={{ 
-              height: 200, 
-              bgcolor: '#1e1e1e', 
-              color: '#d4d4d4', 
-              p: 2, 
-              fontFamily: 'monospace',
-              fontSize: '14px',
-              overflow: 'auto',
-              whiteSpace: 'pre-wrap'
-            }}
-          >
+      <Collapsible open={consoleOpen} onOpenChange={setConsoleOpen}>
+        <CollapsibleTrigger asChild>
+          <div className="border-t bg-gray-50 p-3 flex items-center justify-between cursor-pointer hover:bg-gray-100">
+            <span className="font-medium">Output Console</span>
+            {consoleOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+          </div>
+        </CollapsibleTrigger>
+        <CollapsibleContent>
+          <div className="h-48 bg-gray-900 text-green-400 p-4 font-mono text-sm overflow-auto">
             {isRunning ? 'Running code...' : (output || 'No output yet. Click Run to execute your code.')}
-          </Box>
-        </Collapse>
-      </Paper>
-    </Box>
+          </div>
+        </CollapsibleContent>
+      </Collapsible>
+    </div>
   );
 };
 

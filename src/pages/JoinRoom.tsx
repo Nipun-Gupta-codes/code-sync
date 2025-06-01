@@ -1,18 +1,10 @@
 
 import React, { useState } from 'react';
-import { 
-  Box, 
-  AppBar, 
-  Toolbar, 
-  Typography, 
-  Container,
-  Paper,
-  TextField,
-  Button,
-  IconButton,
-  CircularProgress
-} from '@mui/material';
-import { ArrowBack } from '@mui/icons-material';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const JoinRoom = () => {
@@ -38,71 +30,65 @@ const JoinRoom = () => {
   };
 
   return (
-    <Box sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>
-      <AppBar position="static">
-        <Toolbar>
-          <IconButton color="inherit" onClick={() => navigate('/')} sx={{ mr: 2 }}>
-            <ArrowBack />
-          </IconButton>
-          <Typography variant="h6">
-            Join Room
-          </Typography>
-        </Toolbar>
-      </AppBar>
+    <div className="min-h-screen bg-gray-50">
+      {/* Header */}
+      <div className="bg-blue-600 text-white p-4">
+        <div className="flex items-center gap-4">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => navigate('/')}
+            className="text-white hover:bg-blue-700"
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Back
+          </Button>
+          <h1 className="text-xl font-semibold">Join Room</h1>
+        </div>
+      </div>
 
-      <Container maxWidth="sm" sx={{ mt: 4 }}>
-        <Paper elevation={3} sx={{ p: 4 }}>
-          <Typography variant="h4" gutterBottom textAlign="center">
-            Join a Room
-          </Typography>
-          
-          <Box sx={{ mt: 3 }}>
-            <TextField
-              fullWidth
-              label="Room Link"
-              value={roomLink}
-              onChange={(e) => setRoomLink(e.target.value)}
-              margin="normal"
-              required
-              helperText="Paste the invite link (https://codesync.app/join/ROOM_ID)"
-            />
-            
-            <TextField
-              fullWidth
-              label="Password (if required)"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              margin="normal"
-            />
-            
-            <Box sx={{ position: 'relative', mt: 3 }}>
+      {/* Content */}
+      <div className="container mx-auto px-4 py-8">
+        <div className="max-w-md mx-auto">
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-center text-2xl">Join a Room</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="roomLink">Room Link</Label>
+                <Input
+                  id="roomLink"
+                  value={roomLink}
+                  onChange={(e) => setRoomLink(e.target.value)}
+                  placeholder="Paste the invite link (https://codesync.app/join/ROOM_ID)"
+                  required
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="password">Password (if required)</Label>
+                <Input
+                  id="password"
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Enter room password"
+                />
+              </div>
+              
               <Button
-                fullWidth
-                variant="contained"
-                size="large"
                 onClick={handleJoin}
                 disabled={!roomLink.trim() || loading}
+                className="w-full"
               >
-                Join Room
+                {loading ? 'Joining...' : 'Join Room'}
               </Button>
-              {loading && (
-                <CircularProgress
-                  size={24}
-                  sx={{
-                    position: 'absolute',
-                    top: '50%',
-                    left: '50%',
-                    marginTop: '-12px',
-                    marginLeft: '-12px',
-                  }}
-                />
-              )}
-            </Box>
-          </Box>
-        </Paper>
-      </Container>
-    </Box>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    </div>
   );
 };
 
