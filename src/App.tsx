@@ -9,6 +9,8 @@ import NotFound from "./pages/NotFound";
 import SoloEditor from "./pages/SoloEditor";
 import CreateRoom from "./pages/CreateRoom";
 import JoinRoom from "./pages/JoinRoom";
+import Auth from "./pages/Auth";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 const queryClient = new QueryClient();
 
@@ -20,9 +22,18 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />} />
+          <Route path="/auth" element={<Auth />} />
           <Route path="/solo" element={<SoloEditor />} />
-          <Route path="/create" element={<CreateRoom />} />
-          <Route path="/join" element={<JoinRoom />} />
+          <Route path="/create" element={
+            <ProtectedRoute>
+              <CreateRoom />
+            </ProtectedRoute>
+          } />
+          <Route path="/join" element={
+            <ProtectedRoute>
+              <JoinRoom />
+            </ProtectedRoute>
+          } />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
