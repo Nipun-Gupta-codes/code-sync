@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -128,9 +129,9 @@ int main() {
             // Simple execution for basic JavaScript
             if (sourceCode.includes('console.log')) {
               // Extract console.log statements and execute them
-              const logMatches = sourceCode.match(/console\.log\([^)]+\)/g);
-              if (logMatches) {
-                logMatches.forEach(logStatement => {
+              const jsLogMatches = sourceCode.match(/console\.log\([^)]+\)/g);
+              if (jsLogMatches) {
+                jsLogMatches.forEach(logStatement => {
                   try {
                     eval(logStatement);
                   } catch (e) {
@@ -161,9 +162,9 @@ int main() {
           const pythonOutput: string[] = [];
           
           // Handle print statements
-          const printMatches = sourceCode.match(/print\([^)]+\)/g);
-          if (printMatches) {
-            printMatches.forEach(printStatement => {
+          const pythonPrintMatches = sourceCode.match(/print\([^)]+\)/g);
+          if (pythonPrintMatches) {
+            pythonPrintMatches.forEach(printStatement => {
               // Extract content between quotes
               const contentMatch = printStatement.match(/print\(["']([^"']+)["']\)/);
               if (contentMatch) {
@@ -190,9 +191,9 @@ int main() {
           const javaOutput: string[] = [];
           
           // Handle System.out.println statements
-          const printlnMatches = sourceCode.match(/System\.out\.println\([^)]+\)/g);
-          if (printlnMatches) {
-            printlnMatches.forEach(printStatement => {
+          const javaPrintlnMatches = sourceCode.match(/System\.out\.println\([^)]+\)/g);
+          if (javaPrintlnMatches) {
+            javaPrintlnMatches.forEach(printStatement => {
               const contentMatch = printStatement.match(/System\.out\.println\(["']([^"']+)["']\)/);
               if (contentMatch) {
                 javaOutput.push(contentMatch[1]);
@@ -206,9 +207,9 @@ int main() {
           }
           
           // Handle System.out.print statements
-          const printMatches = sourceCode.match(/System\.out\.print\([^)]+\)/g);
-          if (printMatches) {
-            printMatches.forEach(printStatement => {
+          const javaPrintMatches = sourceCode.match(/System\.out\.print\([^)]+\)/g);
+          if (javaPrintMatches) {
+            javaPrintMatches.forEach(printStatement => {
               const contentMatch = printStatement.match(/System\.out\.print\(["']([^"']+)["']\)/);
               if (contentMatch) {
                 javaOutput.push(contentMatch[1]);
@@ -223,9 +224,9 @@ int main() {
           const cppOutput: string[] = [];
           
           // Handle cout statements
-          const coutMatches = sourceCode.match(/cout\s*<<[^;]+/g);
-          if (coutMatches) {
-            coutMatches.forEach(coutStatement => {
+          const cppCoutMatches = sourceCode.match(/cout\s*<<[^;]+/g);
+          if (cppCoutMatches) {
+            cppCoutMatches.forEach(coutStatement => {
               // Extract quoted strings
               const stringMatches = coutStatement.match(/"([^"]+)"/g);
               if (stringMatches) {
