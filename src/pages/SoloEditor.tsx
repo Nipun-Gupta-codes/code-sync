@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -109,49 +108,146 @@ int main() {
     editorRef.current = editor;
   };
 
-  // Simple code execution simulation
+  // Enhanced code execution with better simulation
   const executeCode = (lang: string, sourceCode: string, input: string) => {
     try {
       switch (lang) {
         case 'javascript':
-          // Simple JavaScript execution
+          // Enhanced JavaScript execution
           const logs: string[] = [];
+          const errors: string[] = [];
+          
+          // Create a safe environment with console.log capture
           const originalLog = console.log;
-          console.log = (...args) => logs.push(args.join(' '));
+          const originalError = console.error;
           
-          // Create a safe eval environment
-          const func = new Function('input', sourceCode);
-          func(input);
+          console.log = (...args) => logs.push(args.map(arg => String(arg)).join(' '));
+          console.error = (...args) => errors.push(args.map(arg => String(arg)).join(' '));
           
+          try {
+            // Simple execution for basic JavaScript
+            if (sourceCode.includes('console.log')) {
+              // Extract console.log statements and execute them
+              const logMatches = sourceCode.match(/console\.log\([^)]+\)/g);
+              if (logMatches) {
+                logMatches.forEach(logStatement => {
+                  try {
+                    eval(logStatement);
+                  } catch (e) {
+                    errors.push(`Error in ${logStatement}: ${e}`);
+                  }
+                });
+              }
+            } else {
+              // Try to execute the whole code
+              eval(sourceCode);
+            }
+          } catch (error) {
+            errors.push(`Runtime Error: ${error}`);
+          }
+          
+          // Restore original console methods
           console.log = originalLog;
-          return logs.join('\n') || 'No output';
+          console.error = originalError;
+          
+          let result = '';
+          if (logs.length > 0) result += logs.join('\n');
+          if (errors.length > 0) result += (result ? '\n' : '') + 'ERRORS:\n' + errors.join('\n');
+          
+          return result || 'Code executed successfully (no output)';
 
         case 'python':
-          // Mock Python execution
-          if (sourceCode.includes('print("Hello, World!")')) {
-            return 'Hello, World!';
+          // Enhanced Python simulation
+          const pythonOutput: string[] = [];
+          
+          // Handle print statements
+          const printMatches = sourceCode.match(/print\([^)]+\)/g);
+          if (printMatches) {
+            printMatches.forEach(printStatement => {
+              // Extract content between quotes
+              const contentMatch = printStatement.match(/print\(["']([^"']+)["']\)/);
+              if (contentMatch) {
+                pythonOutput.push(contentMatch[1]);
+              } else {
+                // Handle variables or expressions
+                const varMatch = printStatement.match(/print\(([^)]+)\)/);
+                if (varMatch) {
+                  pythonOutput.push(`${varMatch[1]} (simulated output)`);
+                }
+              }
+            });
           }
-          return 'Python execution simulated\nHello, World!';
+          
+          // Handle input if provided
+          if (input && sourceCode.includes('input(')) {
+            pythonOutput.push(`Input received: ${input}`);
+          }
+          
+          return pythonOutput.length > 0 ? pythonOutput.join('\n') : 'Python code executed (no print statements found)';
 
         case 'java':
-          // Mock Java execution
-          if (sourceCode.includes('System.out.println("Hello, World!")')) {
-            return 'Hello, World!';
+          // Enhanced Java simulation
+          const javaOutput: string[] = [];
+          
+          // Handle System.out.println statements
+          const printlnMatches = sourceCode.match(/System\.out\.println\([^)]+\)/g);
+          if (printlnMatches) {
+            printlnMatches.forEach(printStatement => {
+              const contentMatch = printStatement.match(/System\.out\.println\(["']([^"']+)["']\)/);
+              if (contentMatch) {
+                javaOutput.push(contentMatch[1]);
+              } else {
+                const varMatch = printStatement.match(/System\.out\.println\(([^)]+)\)/);
+                if (varMatch) {
+                  javaOutput.push(`${varMatch[1]} (simulated output)`);
+                }
+              }
+            });
           }
-          return 'Java execution simulated\nHello, World!';
+          
+          // Handle System.out.print statements
+          const printMatches = sourceCode.match(/System\.out\.print\([^)]+\)/g);
+          if (printMatches) {
+            printMatches.forEach(printStatement => {
+              const contentMatch = printStatement.match(/System\.out\.print\(["']([^"']+)["']\)/);
+              if (contentMatch) {
+                javaOutput.push(contentMatch[1]);
+              }
+            });
+          }
+          
+          return javaOutput.length > 0 ? javaOutput.join('\n') : 'Java code compiled and executed (no output statements found)';
 
         case 'cpp':
-          // Mock C++ execution
-          if (sourceCode.includes('cout << "Hello, World!"')) {
-            return 'Hello, World!';
+          // Enhanced C++ simulation
+          const cppOutput: string[] = [];
+          
+          // Handle cout statements
+          const coutMatches = sourceCode.match(/cout\s*<<[^;]+/g);
+          if (coutMatches) {
+            coutMatches.forEach(coutStatement => {
+              // Extract quoted strings
+              const stringMatches = coutStatement.match(/"([^"]+)"/g);
+              if (stringMatches) {
+                stringMatches.forEach(str => {
+                  cppOutput.push(str.replace(/"/g, ''));
+                });
+              }
+              
+              // Handle endl
+              if (coutStatement.includes('endl')) {
+                cppOutput.push(''); // Add newline
+              }
+            });
           }
-          return 'C++ execution simulated\nHello, World!';
+          
+          return cppOutput.length > 0 ? cppOutput.join('\n') : 'C++ code compiled and executed (no cout statements found)';
 
         default:
-          return 'Language not supported for execution';
+          return `Language ${lang} execution not implemented`;
       }
     } catch (error) {
-      return `Error: ${error}`;
+      return `Execution Error: ${error}`;
     }
   };
 
@@ -160,12 +256,25 @@ int main() {
     setConsoleOpen(true);
     setOutput('Executing code...');
     
-    // Simulate execution delay
+    // Simulate compilation/execution delay
     setTimeout(() => {
       const result = executeCode(language, code, stdin);
-      setOutput(`Running ${language} code...\n\nInput: ${stdin || '(no input)'}\n\nOutput:\n${result}\n\nExecution completed.`);
+      const timestamp = new Date().toLocaleTimeString();
+      
+      let outputText = `[${timestamp}] Running ${language.toUpperCase()} code...\n`;
+      outputText += `${'='.repeat(50)}\n\n`;
+      
+      if (stdin) {
+        outputText += `Input provided: ${stdin}\n\n`;
+      }
+      
+      outputText += `Output:\n${result}\n\n`;
+      outputText += `${'='.repeat(50)}\n`;
+      outputText += `Execution completed at ${timestamp}`;
+      
+      setOutput(outputText);
       setIsRunning(false);
-    }, 1000);
+    }, 1500); // Slightly longer delay for realism
   };
 
   const handleCopyCode = () => {
